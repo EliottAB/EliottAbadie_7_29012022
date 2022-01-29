@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Les petits plats</title>
+</head>
+<body>
+    <header>
+        <img src="assets/logo.png" alt="Logo Les petits plats">
+        <h1>Les petits plats</h1>
+    </header>
+
+    <main>
+        <div class="searchall">
+            <img src="assets/loupe.png" class="loupe" alt="loupe">
+            <input type="search" id="search" placeholder="Rechercher une recette">
+        </div>
+
+        <div class="advancedsearch">
+            <ul class="selectedtags"></ul>
+            <ul class="tags">
+                <li><button>Ingredients</button><img src="assets/row.png" alt="row"></li>
+                <li><button>Appareils</button><img src="assets/row.png" alt="row"></li>
+                <li><button>Ustensiles</button><img src="assets/row.png" alt="row"></li>
+            </ul>
+        </div>
+
+        <section class="recettes"></section>
+    </main>
+    <script src="recipes.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
