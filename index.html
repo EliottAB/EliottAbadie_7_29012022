@@ -22,9 +22,30 @@
         <div class="advancedsearch">
             <ul class="selectedtags"></ul>
             <ul class="tags">
-                <li><button>Ingredients</button><img src="assets/row.png" alt="row"></li>
-                <li><button>Appareils</button><img src="assets/row.png" alt="row"></li>
-                <li><button>Ustensiles</button><img src="assets/row.png" alt="row"></li>
+                <li>
+                    <input class="specificsearch" type="search" placeholder="Rechercher un ingredient">
+                    <div class="groupbutton">
+                        <button onclick="showList('.tags>li:nth-child(1)', 'Ingredients')">Ingredients</button>
+                        <img src="assets/row.png" alt="row">
+                    </div>
+                    <ul class="listall ingredients"></ul>
+                </li>
+                <li>
+                    <input class="specificsearch" type="search" placeholder="Rechercher un appareil">
+                    <div class="groupbutton">
+                        <button onclick="showList('.tags>li:nth-child(2)', 'Appareils')">Appareils</button>
+                        <img src="assets/row.png" alt="row">
+                    </div>
+                    <ul class="listall appliances"></ul>
+                </li>
+                <li>
+                    <input class="specificsearch" type="search" placeholder="Rechercher un ustensile">
+                    <div class="groupbutton">
+                        <button onclick="showList('.tags>li:nth-child(3)', 'Ustensiles')">Ustensiles</button>
+                        <img src="assets/row.png" alt="row">
+                    </div>
+                    <ul class="listall ustencils"></ul>
+                </li>
             </ul>
         </div>
 
