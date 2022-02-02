@@ -83,9 +83,9 @@ function closeList(element, buttontext){
 
 recipes.forEach(recipe => {
     let article = document.createElement("article")
-    article.name = recipe.name
     article.ingredientsstring = ""
     article.description = recipe.description
+    article.globalinfos = recipe.name + " " + recipe.description + " "
 
     let imagecontainer = document.createElement("div")
     imagecontainer.classList.add("imagecontainer")
@@ -105,6 +105,7 @@ recipes.forEach(recipe => {
     needs.classList.add("needs")
     recipe.ingredients.forEach(ingredients => {
         article.ingredientsstring = article.ingredientsstring + ingredients.ingredient + " "
+        article.globalinfos = article.globalinfos + article.ingredientsstring
         let ingredientp = document.createElement("p")
         let details = document.createElement("span")
         if (ingredients.unit == "grammes") {
@@ -132,6 +133,7 @@ recipes.forEach(recipe => {
         needs.appendChild(ingredientp)
     })
 
+    console.log(article.globalinfos)
     let description = document.createElement("p")
     description.classList.add("description")
     description.innerHTML = recipe.description
@@ -149,7 +151,7 @@ recipes.forEach(recipe => {
 searchallbar.addEventListener("input", () => {
     if (searchallbar.value.length >= 3) {
         document.querySelectorAll(".recettes article").forEach(article => { 
-            if ((searchTerm(article.name)==true || searchTerm(article.ingredientsstring) || article.description.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").indexOf(searchallbar.value.toLowerCase())>-1) == false) {
+            if ((searchTerm(article)==true || article.description.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").indexOf(searchallbar.value.toLowerCase())>-1) == false) {
                 article.style.display = "none"
             }else{
                 article.style.display = ""
@@ -162,11 +164,11 @@ searchallbar.addEventListener("input", () => {
     }
 })
 
-function searchTerm(location){
+function searchTerm(article){
     let test = false
     let test2 = 0
     searchallbar.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(" ").forEach(element => {
-        if (location.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(element)) {
+        if (article.globalinfos.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(element)) {
                 test2++
         }
         if (test2 == searchallbar.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(" ").length) {
@@ -181,5 +183,3 @@ function searchTerm(location){
         return true
     }
 }
-
-console.log("le sèrbe mangeait du maïs à découvert".normalize("NFD").replace(/[\u0300-\u036f]/g, ""))
