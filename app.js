@@ -26,8 +26,8 @@ displayListsElements(allustensils, 3, "ustensil")
 
 
 function deleteWrongs(tagsarray, tag){
-    if(tagsarray.indexOf((tag.charAt(0).toUpperCase() + tag.slice(1).toLowerCase()).normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z ]/g, ""))>-1 == false){
-        tagsarray.push((tag.charAt(0).toUpperCase() + tag.slice(1).toLowerCase()).normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z ]/g, ""))
+    if(tagsarray.indexOf((tag.charAt(0).toUpperCase() + tag.slice(1).toLowerCase()).replace(/[.*+?^${}()|[\]\\]/g, ""))>-1 == false){
+        tagsarray.push((tag.charAt(0).toUpperCase() + tag.slice(1).toLowerCase()).replace(/[.*+?^${}()|[0-9[\]\\]/g, ""))
     }
 }
 
@@ -55,6 +55,11 @@ function displayListsElements(tagsarray, listnth, type){
 }
 
 function showList(element, buttontext){
+    if ((document.querySelector(element).listopened == true) == false) {
+        closeList(".tags>li:nth-child(1)", "Ingredients")
+        closeList(".tags>li:nth-child(2)", "Appareils")
+        closeList(".tags>li:nth-child(3)", "Ustensiles")
+    }
     if(document.querySelector(element).listopened != true){
         document.querySelector(element + " .groupbutton").classList.add("listopened")
         document.querySelector(element + " .groupbutton button").innerHTML = ""
@@ -63,17 +68,24 @@ function showList(element, buttontext){
         document.querySelector(element + " .listall").classList.add("listopened")
         document.querySelector(element).listopened = true
     }else{
-        document.querySelector(element + " .groupbutton").classList.remove("listopened")
+        closeList(element, buttontext)
+    }
+}
+
+function closeList(element, buttontext){
+    document.querySelector(element + " .groupbutton").classList.remove("listopened")
         document.querySelector(element + " .groupbutton button").innerHTML = buttontext
         document.querySelector(element).classList.remove("listopened")
         document.querySelector(element + " .specificsearch").classList.remove("listopened")
         document.querySelector(element + " .listall").classList.remove("listopened")
         document.querySelector(element).listopened = false
-    }
 }
 
 recipes.forEach(recipe => {
     let article = document.createElement("article")
+    article.name = recipe.name
+    article.ingredientsstring = ""
+    article.description = recipe.description
 
     let imagecontainer = document.createElement("div")
     imagecontainer.classList.add("imagecontainer")
@@ -92,6 +104,7 @@ recipes.forEach(recipe => {
     let needs = document.createElement("div")
     needs.classList.add("needs")
     recipe.ingredients.forEach(ingredients => {
+        article.ingredientsstring = article.ingredientsstring + ingredients.ingredient + " "
         let ingredientp = document.createElement("p")
         let details = document.createElement("span")
         if (ingredients.unit == "grammes") {
@@ -134,5 +147,39 @@ recipes.forEach(recipe => {
 });
 
 searchallbar.addEventListener("input", () => {
-    console.log(searchallbar.value)
+    if (searchallbar.value.length >= 3) {
+        document.querySelectorAll(".recettes article").forEach(article => { 
+            if ((searchTerm(article.name)==true || searchTerm(article.ingredientsstring) || article.description.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").indexOf(searchallbar.value.toLowerCase())>-1) == false) {
+                article.style.display = "none"
+            }else{
+                article.style.display = ""
+            }
+        });
+    }else{
+        document.querySelectorAll(".recettes article").forEach(article => {
+            article.style.display = ""
+        });
+    }
 })
+
+function searchTerm(location){
+    let test = false
+    let test2 = 0
+    searchallbar.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(" ").forEach(element => {
+        if (location.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(element)) {
+                test2++
+        }
+        if (test2 == searchallbar.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(" ").length) {
+            test = true
+        }else{
+            test = false
+        }
+    });
+    if (test == false) {
+        return false
+    }else{
+        return true
+    }
+}
+
+console.log("le sèrbe mangeait du maïs à découvert".normalize("NFD").replace(/[\u0300-\u036f]/g, ""))

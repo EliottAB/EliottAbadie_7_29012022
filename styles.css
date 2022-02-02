@@ -60,18 +60,6 @@ header h1{
     margin-top: 1.25em;
 }
 
-.tags button{
-    width: 100%;
-    height: 100%;
-    padding-right: 2.8em;
-    border: none;
-    background-color: transparent;
-    color: white;
-    cursor: pointer;
-    font-family: "Lato";
-    font-weight: 700;
-}
-
 .tags>li{
     position: relative;
     width: 10.625em;
@@ -86,6 +74,19 @@ header h1{
     width: 10.625em;
     height: 4.3125em;
     z-index: 2;
+}
+
+.tags button{
+    width: 100%;
+    height: 100%;
+    padding-right: 2.8em;
+    border: none;
+    background-color: transparent;
+    color: white;
+    cursor: pointer;
+    font-size: 1.125em;
+    font-family: "Lato";
+    font-weight: 700;
 }
 
 .tags img{
@@ -188,6 +189,9 @@ header h1{
     display: flex;
     padding: 0.625em 1.25em;
     margin: 0 1.25em 1.25em 0;
+    font-size: 0.875em;
+    font-family: "Lato";
+    font-weight: 700;
     color: white;
     border-radius: 0.3125em;
     cursor: pointer;
@@ -223,6 +227,7 @@ header h1{
     height: 22.75em;
     padding: 0 1.25em 1.25em;
     flex-wrap: wrap;
+    overflow: hidden;
     background-color: #E7E7E7;
     border-radius: 0.3125em;
 }
@@ -235,7 +240,6 @@ header h1{
     margin: 0 -1.25em;
     align-self: flex-start;
     background-color: #C7BEBE;
-    border-radius: 0.3125em;
 }
 
 .recettes .name{
@@ -291,8 +295,18 @@ header h1{
 }
 
 
-@media screen and (max-width: 720px){
+@media screen and (max-width: 1200px){
+    .recettes{
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media screen and (max-width: 920px){
     body{
         font-size: 2.2222vw;
-    }    
+    }
+    .recettes{
+        grid-template-columns: 1fr;
+        font-size: 1.3em;
+    }
 }
