@@ -151,7 +151,7 @@ recipes.forEach(recipe => {
 searchallbar.addEventListener("input", () => {
     if (searchallbar.value.length >= 3) {
         document.querySelectorAll(".recettes article").forEach(article => { 
-            if ((searchTerm(article)==true || article.description.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").indexOf(searchallbar.value.toLowerCase())>-1) == false) {
+            if ((searchTerm(article)==true) == false) {
                 article.style.display = "none"
             }else{
                 article.style.display = ""
