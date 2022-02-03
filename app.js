@@ -1,43 +1,59 @@
 let allingredients = []
 let allappliances = []
 let allustensils = []
+let presentsingredients = []
+let presentsappliances = []
+let presentsustensils = []
 let selectedtags = document.querySelector(".selectedtags")
 let searchallbar = document.querySelector("#search")
 let recipescontainer = document.querySelector(".recettes")
 
-recipes.forEach(element => {
-    element.ingredients.forEach(ingredients => {
-        deleteWrongs(allingredients, ingredients.ingredient)
-    })
-});
-displayListsElements(allingredients, 1, "ingredient")
-
-recipes.forEach(element => {
-    deleteWrongs(allappliances, element.appliance)
-});
-displayListsElements(allappliances, 2, "appliance")
-
-recipes.forEach(element => {
-    element.ustensils.forEach(ustensil => {
-        deleteWrongs(allustensils, ustensil)
-    })
-});
-displayListsElements(allustensils, 3, "ustensil")
+selectAllTags(allingredients, allappliances, allustensils)
+function selectAllTags(ingredientsarray, appliancesarray, ustensilsarray){
+    recipes.forEach(element => {
+        element.ingredients.forEach(ingredients => {
+            deleteWrongs(ingredientsarray, ingredients.ingredient)
+        })
+        deleteWrongs(appliancesarray, element.appliance)
+        element.ustensils.forEach(ustensil => {
+            deleteWrongs(ustensilsarray, ustensil)
+        })
+    });
+    displayListsElements(ingredientsarray, 1, "ingredient")
+    displayListsElements(appliancesarray, 2, "appliance")
+    displayListsElements(ustensilsarray, 3, "ustensil")
+}
 
 
 function deleteWrongs(tagsarray, tag){
-    let isthesame = false
-    tagsarray.forEach(element => {
-        if(element.normalize("NFD").toLowerCase().replace(/[\u0300-\u036f]/g, "") == tag.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")){
-            isthesame = true
+    if (tagsarray == allingredients || tagsarray == allappliances || tagsarray == allustensils) {        
+        let isthesame = false
+        tagsarray.forEach(element => {
+            if(element.normalize("NFD").toLowerCase().replace(/[\u0300-\u036f]/g, "") == tag.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")){
+                isthesame = true
+            }
+        });
+        if (isthesame == false) {
+            tagsarray.push((tag.charAt(0).toUpperCase() + tag.slice(1).toLowerCase()).replace(/[.*+?^${}()|[0-9[\]\\]/g, ""))
         }
-    });
-    if (isthesame == false) {
-        tagsarray.push((tag.charAt(0).toUpperCase() + tag.slice(1).toLowerCase()).replace(/[.*+?^${}()|[0-9[\]\\]/g, ""))
+    }else{
+        tagsarray.forEach(element => {
+            tagsarray.count = 0
+            for (let i = 0; i < tagsarray.length; i++) {
+                if (tagsarray[i] === element) {
+                    tagsarray.count++
+                }
+            }
+            if (tagsarray.count >= 2) {
+                tagsarray.splice(tagsarray.indexOf(element), 1)
+            }
+        });
     }
 }
 
+
 function displayListsElements(tagsarray, listnth, type){
+    document.querySelector(".tags>li:nth-child("+ listnth +") .listall").innerHTML = ""
     tagsarray.sort(function (a, b) {
         return a.localeCompare(b);
       });
@@ -95,6 +111,9 @@ recipes.forEach(recipe => {
     article.ingredientsstring = ""
     article.description = recipe.description
     article.globalinfos = recipe.name + " "
+    article.ingredients = []
+    article.appliance = recipe.appliance
+    article.ustensils = recipe.ustensils
 
     let imagecontainer = document.createElement("div")
     imagecontainer.classList.add("imagecontainer")
@@ -114,7 +133,7 @@ recipes.forEach(recipe => {
     needs.classList.add("needs")
     recipe.ingredients.forEach(ingredients => {
         article.ingredientsstring = article.ingredientsstring + ingredients.ingredient + " "
-        article.globalinfos = article.globalinfos + article.ingredientsstring
+        article.ingredients.push(ingredients.ingredient)
         let ingredientp = document.createElement("p")
         let details = document.createElement("span")
         if (ingredients.unit == "grammes") {
@@ -141,6 +160,7 @@ recipes.forEach(recipe => {
         }
         needs.appendChild(ingredientp)
     })
+    article.globalinfos = article.globalinfos + article.ingredientsstring
 
     let description = document.createElement("p")
     description.classList.add("description")
@@ -158,17 +178,32 @@ recipes.forEach(recipe => {
 
 searchallbar.addEventListener("input", () => {
     if (searchallbar.value.length >= 3) {
+        presentsingredients = []
+        presentsappliances = []
+        presentsustensils = []
         document.querySelectorAll(".recettes article").forEach(article => { 
-            if ((searchTerm(article)==true || article.description.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").indexOf(searchallbar.value.toLowerCase())>-1) == false) {
+            if ((searchTerm(article)==true || article.description.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").indexOf(searchallbar.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""))>-1) == false) {
                 article.style.display = "none"
+                article.showed = false
             }else{
                 article.style.display = ""
+                article.showed = true
+                article.ingredients.forEach(ingredient => {
+                    presentsingredients.push(ingredient)
+                });
+                article.ustensils.forEach(ustensil => {
+                    presentsustensils.push(ustensil)
+                });
+                presentsappliances.push(article.appliance)
             }
         });
+        selectAllTags(presentsingredients, presentsappliances, presentsustensils)
     }else{
         document.querySelectorAll(".recettes article").forEach(article => {
             article.style.display = ""
+            article.showed = true
         });
+        selectAllTags(allingredients, allappliances, allustensils)
     }
 })
 
