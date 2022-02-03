@@ -26,7 +26,7 @@ function selectAllTags(ingredientsarray, appliancesarray, ustensilsarray){
 
 
 function deleteWrongs(tagsarray, tag){
-    if (tagsarray == allingredients || tagsarray == allappliances || tagsarray == allustensils) {        
+    if (tagsarray == allingredients || tagsarray == allappliances || tagsarray == allustensils) {
         let isthesame = false
         tagsarray.forEach(element => {
             if(element.normalize("NFD").toLowerCase().replace(/[\u0300-\u036f]/g, "") == tag.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")){
@@ -203,6 +203,9 @@ searchallbar.addEventListener("input", () => {
             article.style.display = ""
             article.showed = true
         });
+        allingredients = []
+        allappliances = []
+        allustensils = []
         selectAllTags(allingredients, allappliances, allustensils)
     }
 })
