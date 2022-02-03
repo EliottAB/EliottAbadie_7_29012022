@@ -85,7 +85,7 @@ recipes.forEach(recipe => {
     let article = document.createElement("article")
     article.ingredientsstring = ""
     article.description = recipe.description
-    article.globalinfos = recipe.name + " " + recipe.description + " "
+    article.globalinfos = recipe.name + " "
 
     let imagecontainer = document.createElement("div")
     imagecontainer.classList.add("imagecontainer")
@@ -151,7 +151,7 @@ recipes.forEach(recipe => {
 searchallbar.addEventListener("input", () => {
     if (searchallbar.value.length >= 3) {
         document.querySelectorAll(".recettes article").forEach(article => { 
-            if ((searchTerm(article)==true) == false) {
+            if ((searchTerm(article)==true || article.description.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").indexOf(searchallbar.value.toLowerCase())>-1) == false) {
                 article.style.display = "none"
             }else{
                 article.style.display = ""
@@ -165,19 +165,21 @@ searchallbar.addEventListener("input", () => {
 })
 
 function searchTerm(article){
-    let test = false
-    let test2 = 0
+    let retour = false
+    let verifiedstring = 0
+    let prevelement = ""
     searchallbar.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(" ").forEach(element => {
-        if (article.globalinfos.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(element)) {
-                test2++
+        if (article.globalinfos.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(element) && prevelement != element) {
+                verifiedstring++
         }
-        if (test2 == searchallbar.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(" ").length) {
-            test = true
+        if (verifiedstring == searchallbar.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(" ").length) {
+            retour = true
         }else{
-            test = false
+            retour = false
         }
+        prevelement = element
     });
-    if (test == false) {
+    if (retour == false) {
         return false
     }else{
         return true
