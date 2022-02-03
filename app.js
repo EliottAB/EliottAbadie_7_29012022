@@ -26,12 +26,21 @@ displayListsElements(allustensils, 3, "ustensil")
 
 
 function deleteWrongs(tagsarray, tag){
-    if(tagsarray.indexOf((tag.charAt(0).toUpperCase() + tag.slice(1).toLowerCase()).replace(/[.*+?^${}()|[\]\\]/g, ""))>-1 == false){
+    let isthesame = false
+    tagsarray.forEach(element => {
+        if(element.normalize("NFD").toLowerCase().replace(/[\u0300-\u036f]/g, "") == tag.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")){
+            isthesame = true
+        }
+    });
+    if (isthesame == false) {
         tagsarray.push((tag.charAt(0).toUpperCase() + tag.slice(1).toLowerCase()).replace(/[.*+?^${}()|[0-9[\]\\]/g, ""))
     }
 }
 
 function displayListsElements(tagsarray, listnth, type){
+    tagsarray.sort(function (a, b) {
+        return a.localeCompare(b);
+      });
     tagsarray.forEach(element => {
         let li = document.createElement("li")
         let croix = document.createElement("img")
@@ -133,7 +142,6 @@ recipes.forEach(recipe => {
         needs.appendChild(ingredientp)
     })
 
-    console.log(article.globalinfos)
     let description = document.createElement("p")
     description.classList.add("description")
     description.innerHTML = recipe.description
