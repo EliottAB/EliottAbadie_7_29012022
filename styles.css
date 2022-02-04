@@ -108,7 +108,7 @@ header h1{
 
 .specificsearch{
     display: none;
-    width: 40%;
+    width: 15em;
     margin: 1.375em;
     background-color: transparent;
     color: white;
@@ -308,5 +308,18 @@ header h1{
     .recettes{
         grid-template-columns: 1fr;
         font-size: 1.3em;
+    }
+
+    .tags{
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .tags>li{
+        margin-bottom: 1.25em;
+    }
+
+    .recettes{
+        margin-top: 0;
     }
 }
