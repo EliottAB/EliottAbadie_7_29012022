@@ -51,6 +51,20 @@ function deleteWrongs(tagsarray, tag){
     }
 }
 
+function searchInSelectedTags(element){
+    let retour = false
+    document.querySelectorAll(".selectedtags li").forEach(tag => {
+        if (tag.textContent == element) {
+            retour = true
+        }
+    });
+    if (retour == true) {
+        return true
+    }else{
+        return false
+    }
+}
+
 
 function displayListsElements(tagsarray, listnth, type){
     document.querySelector(".tags>li:nth-child("+ listnth +") .listall").innerHTML = ""
@@ -68,14 +82,18 @@ function displayListsElements(tagsarray, listnth, type){
                 li.classList.remove("selected" + type)
                 document.querySelector(".tags>li:nth-child("+ listnth +") .listall").appendChild(li)
                 li.selected = false
+                displayListsElements(tagsarray, listnth, type)
             }else{
                 li.appendChild(croix)
                 li.classList.add("selected" + type)
                 selectedtags.appendChild(li)
                 li.selected = true
             }
+            resultSearchbar()
         })
-        document.querySelector(".tags>li:nth-child("+ listnth +") .listall").appendChild(li)
+        if (searchInSelectedTags(element) == false) { 
+            document.querySelector(".tags>li:nth-child("+ listnth +") .listall").appendChild(li)
+        }
     })
 }
 
@@ -112,7 +130,8 @@ recipes.forEach(recipe => {
     article.description = recipe.description
     article.globalinfos = recipe.name + " "
     article.ingredients = []
-    article.appliance = recipe.appliance
+    article.appliance = []
+    article.appliance.push(recipe.appliance)
     article.ustensils = recipe.ustensils
 
     let imagecontainer = document.createElement("div")
@@ -177,6 +196,10 @@ recipes.forEach(recipe => {
 });
 
 searchallbar.addEventListener("input", () => {
+    resultSearchbar()
+})
+
+function resultSearchbar(){
     if (searchallbar.value.length >= 3) {
         presentsingredients = []
         presentsappliances = []
@@ -194,8 +217,11 @@ searchallbar.addEventListener("input", () => {
                 article.ustensils.forEach(ustensil => {
                     presentsustensils.push(ustensil)
                 });
-                presentsappliances.push(article.appliance)
+                presentsappliances.push(article.appliance[0])
             }
+            applyAdvanced(".selectedustensil", article, article.ustensils)
+            applyAdvanced(".selectedappliance", article, article.appliance)
+            applyAdvanced(".selectedingredient", article, article.ingredients)
         });
         selectAllTags(presentsingredients, presentsappliances, presentsustensils)
     }else{
@@ -208,7 +234,13 @@ searchallbar.addEventListener("input", () => {
         allustensils = []
         selectAllTags(allingredients, allappliances, allustensils)
     }
-})
+    document.querySelectorAll(".recettes article").forEach(article => {
+        applyAdvanced(".selectedustensil", article, article.ustensils)
+        applyAdvanced(".selectedappliance", article, article.appliance)
+        applyAdvanced(".selectedingredient", article, article.ingredients)
+
+    });
+}
 
 function searchTerm(article){
     let retour = false
@@ -230,4 +262,29 @@ function searchTerm(article){
     }else{
         return true
     }
+}
+
+function applyAdvanced(categorie, article, categarray){
+    document.querySelectorAll(categorie).forEach(tag => {
+            let test = 0
+            categarray.forEach(element => {
+                if (element.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(tag.textContent.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")) && article.showed == true) {
+                    article.style.display = ""
+                    article.showed = true
+                    article.ingredients.forEach(ingredient => {
+                        presentsingredients.push(ingredient)
+                    });
+                    article.ustensils.forEach(ustensil => {
+                        presentsustensils.push(ustensil)
+                    });
+                    presentsappliances.push(article.appliance[0])
+                }else{
+                    test ++
+                }
+                if(test == categarray.length){     
+                    article.style.display = "none"
+                    article.showed = false
+                }
+            });
+        });
 }
