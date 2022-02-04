@@ -6,9 +6,16 @@ let presentsappliances = []
 let presentsustensils = []
 let selectedtags = document.querySelector(".selectedtags")
 let searchallbar = document.querySelector("#search")
+let searchingredient = document.querySelector(".searchingredient")
+let searchappliance = document.querySelector(".searchappliance")
+let searchustensil = document.querySelector(".searchustensil")
 let recipescontainer = document.querySelector(".recettes")
 
 selectAllTags(allingredients, allappliances, allustensils)
+resultAdvancedSearchbar(searchingredient, "ingredients")
+resultAdvancedSearchbar(searchappliance, "appliances")
+resultAdvancedSearchbar(searchustensil, "ustensils")
+
 function selectAllTags(ingredientsarray, appliancesarray, ustensilsarray){
     recipes.forEach(element => {
         element.ingredients.forEach(ingredients => {
@@ -90,6 +97,9 @@ function displayListsElements(tagsarray, listnth, type){
                 li.selected = true
             }
             resultSearchbar()
+            searchingredient.value = ""
+            searchappliance.value = ""
+            searchustensil.value = ""
         })
         if (searchInSelectedTags(element) == false) { 
             document.querySelector(".tags>li:nth-child("+ listnth +") .listall").appendChild(li)
@@ -240,6 +250,9 @@ function resultSearchbar(){
         applyAdvanced(".selectedingredient", article, article.ingredients)
 
     });
+    searchingredient.value = ""
+    searchappliance.value = ""
+    searchustensil.value = ""
 }
 
 function searchTerm(article){
@@ -287,4 +300,16 @@ function applyAdvanced(categorie, article, categarray){
                 }
             });
         });
+}
+
+function resultAdvancedSearchbar(searchbar, type){
+    searchbar.addEventListener("input", () => {
+        document.querySelectorAll(".listall."+type+" li").forEach(element => {
+            if (element.textContent.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(searchbar.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""))) {
+                element.style.display = ""
+            }else{
+                element.style.display = "none"
+            }
+        });
+    })
 }
