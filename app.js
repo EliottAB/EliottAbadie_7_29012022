@@ -16,6 +16,8 @@ resultAdvancedSearchbar(searchingredient, "ingredients")
 resultAdvancedSearchbar(searchappliance, "appliances")
 resultAdvancedSearchbar(searchustensil, "ustensils")
 
+
+//take elements from recipe.js to put it in advanced filters
 function selectAllTags(ingredientsarray, appliancesarray, ustensilsarray){
     recipes.forEach(element => {
         element.ingredients.forEach(ingredients => {
@@ -31,7 +33,7 @@ function selectAllTags(ingredientsarray, appliancesarray, ustensilsarray){
     displayListsElements(ustensilsarray, 3, "ustensil")
 }
 
-
+//delete wrong characters or duplicates
 function deleteWrongs(tagsarray, tag){
     if (tagsarray == allingredients || tagsarray == allappliances || tagsarray == allustensils) {
         let isthesame = false
@@ -89,7 +91,7 @@ function displayListsElements(tagsarray, listnth, type){
                 li.classList.remove("selected" + type)
                 document.querySelector(".tags>li:nth-child("+ listnth +") .listall").appendChild(li)
                 li.selected = false
-                displayListsElements(tagsarray, listnth, type)
+
             }else{
                 li.appendChild(croix)
                 li.classList.add("selected" + type)
@@ -107,6 +109,7 @@ function displayListsElements(tagsarray, listnth, type){
     })
 }
 
+//show the advanced tags list
 function showList(element, buttontext){
     if ((document.querySelector(element).listopened == true) == false) {
         closeList(".tags>li:nth-child(1)", "Ingredients")
@@ -134,6 +137,8 @@ function closeList(element, buttontext){
         document.querySelector(element).listopened = false
 }
 
+
+//display all recipes
 recipes.forEach(recipe => {
     let article = document.createElement("article")
     article.ingredientsstring = ""
@@ -209,11 +214,12 @@ searchallbar.addEventListener("input", () => {
     resultSearchbar()
 })
 
+//show results and filter tags when user is typing in global searchbar
 function resultSearchbar(){
-    if (searchallbar.value.length >= 3) {
         presentsingredients = []
         presentsappliances = []
         presentsustensils = []
+    if (searchallbar.value.length >= 3) {
         document.querySelectorAll(".recettes article").forEach(article => { 
             if ((searchTerm(article)==true || article.description.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").indexOf(searchallbar.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""))>-1) == false) {
                 article.style.display = "none"
@@ -221,35 +227,30 @@ function resultSearchbar(){
             }else{
                 article.style.display = ""
                 article.showed = true
-                article.ingredients.forEach(ingredient => {
-                    presentsingredients.push(ingredient)
-                });
-                article.ustensils.forEach(ustensil => {
-                    presentsustensils.push(ustensil)
-                });
-                presentsappliances.push(article.appliance[0])
             }
-            applyAdvanced(".selectedustensil", article, article.ustensils)
-            applyAdvanced(".selectedappliance", article, article.appliance)
-            applyAdvanced(".selectedingredient", article, article.ingredients)
         });
-        selectAllTags(presentsingredients, presentsappliances, presentsustensils)
     }else{
         document.querySelectorAll(".recettes article").forEach(article => {
             article.style.display = ""
             article.showed = true
         });
-        allingredients = []
-        allappliances = []
-        allustensils = []
-        selectAllTags(allingredients, allappliances, allustensils)
     }
     document.querySelectorAll(".recettes article").forEach(article => {
         applyAdvanced(".selectedustensil", article, article.ustensils)
         applyAdvanced(".selectedappliance", article, article.appliance)
         applyAdvanced(".selectedingredient", article, article.ingredients)
-
+        if (article.showed == true) {
+            article.ingredients.forEach(ingredient => {
+                presentsingredients.push((ingredient.charAt(0).toUpperCase() + ingredient.slice(1).toLowerCase()).replace(/[.*+?^${}()|[0-9[\]\\]/g, ""))
+            });
+            article.ustensils.forEach(ustensil => {
+                presentsustensils.push((ustensil.charAt(0).toUpperCase() + ustensil.slice(1).toLowerCase()).replace(/[.*+?^${}()|[0-9[\]\\]/g, ""))
+            });
+            presentsappliances.push((article.appliance[0].charAt(0).toUpperCase() + article.appliance[0].slice(1).toLowerCase()).replace(/[.*+?^${}()|[0-9[\]\\]/g, ""))
+        }
+        
     });
+    selectAllTags(presentsingredients, presentsappliances, presentsustensils)
     searchingredient.value = ""
     searchappliance.value = ""
     searchustensil.value = ""
@@ -279,27 +280,20 @@ function searchTerm(article){
 
 function applyAdvanced(categorie, article, categarray){
     document.querySelectorAll(categorie).forEach(tag => {
-            let test = 0
-            categarray.forEach(element => {
-                if (element.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(tag.textContent.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")) && article.showed == true) {
-                    article.style.display = ""
-                    article.showed = true
-                    article.ingredients.forEach(ingredient => {
-                        presentsingredients.push(ingredient)
-                    });
-                    article.ustensils.forEach(ustensil => {
-                        presentsustensils.push(ustensil)
-                    });
-                    presentsappliances.push(article.appliance[0])
-                }else{
-                    test ++
-                }
-                if(test == categarray.length){     
-                    article.style.display = "none"
-                    article.showed = false
-                }
-            });
+        let test = 0
+        categarray.forEach(element => {
+            if (element.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(tag.textContent.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")) && article.showed == true) {
+                article.style.display = ""
+                article.showed = true
+            }else{
+                test ++
+            }
+            if(test == categarray.length){     
+                article.style.display = "none"
+                article.showed = false
+            }
         });
+    });
 }
 
 function resultAdvancedSearchbar(searchbar, type){

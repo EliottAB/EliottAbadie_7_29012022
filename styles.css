@@ -112,8 +112,13 @@ header h1{
     margin: 1.375em;
     background-color: transparent;
     color: white;
+    text-emphasis-color: white;
     border: none;
     outline: none;
+}
+
+.specificsearch::placeholder{
+    color: white;
 }
 
 .listall{
@@ -217,7 +222,7 @@ header h1{
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     grid-gap: 3em;
-    margin-top: 5.125em;
+    margin: 5.125em 0;
 }
 
 .recettes article{
