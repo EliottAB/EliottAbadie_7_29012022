@@ -1,4 +1,3 @@
-let test = nativeloops
 let allingredients = []
 let allappliances = []
 let allustensils = []
@@ -20,15 +19,15 @@ resultAdvancedSearchbar(searchustensil, "ustensils")
 
 //take elements from recipe.js to put it in advanced filters
 function selectAllTags(ingredientsarray, appliancesarray, ustensilsarray){
-    recipes.forEach(element => {
-        element.ingredients.forEach(ingredients => {
-            deleteWrongs(ingredientsarray, ingredients.ingredient)
-        })
-        deleteWrongs(appliancesarray, element.appliance)
-        element.ustensils.forEach(ustensil => {
-            deleteWrongs(ustensilsarray, ustensil)
-        })
-    });
+    for(let i = 0; i < recipes.length; i++){
+        for(let j = 0; j < recipes[i].ingredients.length; j++){
+            deleteWrongs(ingredientsarray, recipes[i].ingredients[j].ingredient)
+        }
+        deleteWrongs(appliancesarray, recipes[i].appliance)
+        for(let j = 0; j < recipes[i].ustensils.length; j++){
+            deleteWrongs(ustensilsarray, recipes[i].ustensils[j])
+        }
+    };
     displayListsElements(ingredientsarray, 1, "ingredient")
     displayListsElements(appliancesarray, 2, "appliance")
     displayListsElements(ustensilsarray, 3, "ustensil")
@@ -38,36 +37,37 @@ function selectAllTags(ingredientsarray, appliancesarray, ustensilsarray){
 function deleteWrongs(tagsarray, tag){
     if (tagsarray == allingredients || tagsarray == allappliances || tagsarray == allustensils) {
         let isthesame = false
-        tagsarray.forEach(element => {
-            if(element.normalize("NFD").toLowerCase().replace(/[\u0300-\u036f]/g, "") == tag.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")){
+        for(let i = 0; i < tagsarray.length; i++){
+            if(tagsarray[i].normalize("NFD").toLowerCase().replace(/[\u0300-\u036f]/g, "") == tag.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")){
                 isthesame = true
             }
-        });
+        };
         if (isthesame == false) {
             tagsarray.push((tag.charAt(0).toUpperCase() + tag.slice(1).toLowerCase()).replace(/[.*+?^${}()|[0-9[\]\\]/g, ""))
         }
     }else{
-        tagsarray.forEach(element => {
+        for(let i = 0; i < tagsarray.length; i++){
             tagsarray.count = 0
-            for (let i = 0; i < tagsarray.length; i++) {
-                if (tagsarray[i] === element) {
+            for (let j = 0; j < tagsarray.length; j++) {
+                if (tagsarray[j] === tagsarray[i]) {
                     tagsarray.count++
                 }
             }
             if (tagsarray.count >= 2) {
-                tagsarray.splice(tagsarray.indexOf(element), 1)
+                tagsarray.splice(tagsarray.indexOf(tagsarray[i]), 1)
             }
-        });
+        };
     }
 }
 
 function searchInSelectedTags(element){
+    const selectedli = document.querySelectorAll(".selectedtags li")
     let retour = false
-    document.querySelectorAll(".selectedtags li").forEach(tag => {
-        if (tag.textContent == element) {
+    for(let i = 0; i < selectedli.length; i++){
+        if (selectedli[i].textContent == element) {
             retour = true
         }
-    });
+    };
     if (retour == true) {
         return true
     }else{
@@ -81,11 +81,11 @@ function displayListsElements(tagsarray, listnth, type){
     tagsarray.sort(function (a, b) {
         return a.localeCompare(b);
       });
-    tagsarray.forEach(element => {
+    for(let i = 0; i < tagsarray.length; i++){
         let li = document.createElement("li")
         let croix = document.createElement("img")
         croix.src = "assets/croix.png"
-        li.innerHTML = element
+        li.innerHTML = tagsarray[i]
         li.addEventListener("click", () => {
             if(li.selected == true){
                 li.removeChild(croix)
@@ -104,10 +104,10 @@ function displayListsElements(tagsarray, listnth, type){
             searchappliance.value = ""
             searchustensil.value = ""
         })
-        if (searchInSelectedTags(element) == false) { 
+        if (searchInSelectedTags(tagsarray[i]) == false) { 
             document.querySelector(".tags>li:nth-child("+ listnth +") .listall").appendChild(li)
         }
-    })
+    }
 }
 
 //show the advanced tags list
@@ -140,21 +140,21 @@ function closeList(element, buttontext){
 
 
 //display all recipes
-recipes.forEach(recipe => {
+for(let i = 0; i < recipes.length; i++){
     let article = document.createElement("article")
     article.ingredientsstring = ""
-    article.description = recipe.description
-    article.globalinfos = recipe.name + " "
+    article.description = recipes[i].description
+    article.globalinfos = recipes[i].name + " "
     article.ingredients = []
     article.appliance = []
-    article.appliance.push(recipe.appliance)
-    article.ustensils = recipe.ustensils
+    article.appliance.push(recipes[i].appliance)
+    article.ustensils = recipes[i].ustensils
 
     let imagecontainer = document.createElement("div")
     imagecontainer.classList.add("imagecontainer")
 
     let name = document.createElement("h3")
-    name.innerHTML = recipe.name
+    name.innerHTML = recipes[i].name
     name.classList.add("name")
 
     let timecontainer = document.createElement("div")
@@ -162,44 +162,44 @@ recipes.forEach(recipe => {
     let timeicon = document.createElement("img")
     timeicon.src = "assets/horloge.png"
     let time = document.createElement("p")
-    time.innerHTML = recipe.time + " min"
+    time.innerHTML = recipes[i].time + " min"
 
     let needs = document.createElement("div")
     needs.classList.add("needs")
-    recipe.ingredients.forEach(ingredients => {
-        article.ingredientsstring = article.ingredientsstring + ingredients.ingredient + " "
-        article.ingredients.push(ingredients.ingredient)
+    for(let j = 0; j < recipes[i].ingredients.length; j++){
+        article.ingredientsstring = article.ingredientsstring + recipes[i].ingredients[j].ingredient + " "
+        article.ingredients.push(recipes[i].ingredients[j].ingredient)
         let ingredientp = document.createElement("p")
         let details = document.createElement("span")
-        if (ingredients.unit == "grammes") {
-            ingredients.unit = "g"
+        if (recipes[i].ingredients[j].unit == "grammes") {
+            recipes[i].ingredients[j].unit = "g"
         }
-        if (ingredients.unit) {
-            if (ingredients.unit.indexOf(" ")>-1){
-                ingredients.unit = ingredients.unit.substring(0, ingredients.unit.indexOf(' '))
+        if (recipes[i].ingredients[j].unit) {
+            if (recipes[i].ingredients[j].unit.indexOf(" ")>-1){
+                recipes[i].ingredients[j].unit = recipes[i].ingredients[j].unit.substring(0, recipes[i].ingredients[j].unit.indexOf(' '))
             }
-            if (ingredients.unit.length>3){
-                ingredients.unit = " " + ingredients.unit
+            if (recipes[i].ingredients[j].unit.length>3){
+                recipes[i].ingredients[j].unit = " " + recipes[i].ingredients[j].unit
             }
-            ingredientp.innerHTML = ingredients.ingredient
-            details.innerHTML = ": " + ingredients.quantity + ingredients.unit
+            ingredientp.innerHTML = recipes[i].ingredients[j].ingredient
+            details.innerHTML = ": " + recipes[i].ingredients[j].quantity + recipes[i].ingredients[j].unit
             ingredientp.appendChild(details)
         }else{
-            if (ingredients.quantity) {
-                ingredientp.innerHTML = ingredients.ingredient
-                details.innerHTML = ": " + ingredients.quantity
+            if (recipes[i].ingredients[j].quantity) {
+                ingredientp.innerHTML = recipes[i].ingredients[j].ingredient
+                details.innerHTML = ": " + recipes[i].ingredients[j].quantity
                 ingredientp.appendChild(details)
             }else{
-                ingredientp.innerHTML = ingredients.ingredient
+                ingredientp.innerHTML = recipes[i].ingredients[j].ingredient
             }
         }
         needs.appendChild(ingredientp)
-    })
+    }
     article.globalinfos = article.globalinfos + article.ingredientsstring
 
     let description = document.createElement("p")
     description.classList.add("description")
-    description.innerHTML = recipe.description
+    description.innerHTML = recipes[i].description
 
     article.appendChild(imagecontainer)
     article.appendChild(name)
@@ -209,7 +209,7 @@ recipes.forEach(recipe => {
     article.appendChild(needs)
     article.appendChild(description)
     recipescontainer.appendChild(article)
-});
+};
 const allarticles = document.querySelectorAll(".recettes article")
 
 searchallbar.addEventListener("input", () => {
@@ -222,38 +222,38 @@ function resultSearchbar(articles, advanced){
         presentsappliances = []
         presentsustensils = []
     if (searchallbar.value.length >= 3) {
-        articles.forEach(article => { 
-            if((searchTerm(article)==true ||article.description.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").indexOf(searchallbar.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""))>-1) == false) {
-                article.style.display = "none"
-                article.showed = false
+        for(let i = 0; i < articles.length; i++){ 
+            if((searchTerm(articles[i])==true ||articles[i].description.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").indexOf(searchallbar.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""))>-1) == false) {
+                articles[i].style.display = "none"
+                articles[i].showed = false
             }else{
-                article.style.display = ""
-                article.showed = true
+                articles[i].style.display = ""
+                articles[i].showed = true
             }
-        });
+        };
     }else{
-        articles.forEach(article => {
-            article.style.display = ""
-            article.showed = true
-        });
+        for(let i = 0; i < articles.length; i++){
+            articles[i].style.display = ""
+            articles[i].showed = true
+        };
     }
-    articles.forEach(article => {
+    for(let i = 0; i < articles.length; i++){
         if(advanced == true) {
-            applyAdvanced(".selectedustensil", article, article.ustensils)
-            applyAdvanced(".selectedappliance", article, article.appliance)
-            applyAdvanced(".selectedingredient", article, article.ingredients)       
+            applyAdvanced(".selectedustensil", articles[i], articles[i].ustensils)
+            applyAdvanced(".selectedappliance", articles[i], articles[i].appliance)
+            applyAdvanced(".selectedingredient", articles[i], articles[i].ingredients)       
         }
-        if (article.showed == true) {
-            article.ingredients.forEach(ingredient => {
+        if (articles[i].showed == true) {
+            articles[i].ingredients.forEach(ingredient => {
                 presentsingredients.push((ingredient.charAt(0).toUpperCase() + ingredient.slice(1).toLowerCase()).replace(/[.*+?^${}()|[0-9[\]\\]/g, ""))
             });
-            article.ustensils.forEach(ustensil => {
+            articles[i].ustensils.forEach(ustensil => {
                 presentsustensils.push((ustensil.charAt(0).toUpperCase() + ustensil.slice(1).toLowerCase()).replace(/[.*+?^${}()|[0-9[\]\\]/g, ""))
             });
-            presentsappliances.push((article.appliance[0].charAt(0).toUpperCase() + article.appliance[0].slice(1).toLowerCase()).replace(/[.*+?^${}()|[0-9[\]\\]/g, ""))
+            presentsappliances.push((articles[i].appliance[0].charAt(0).toUpperCase() + articles[i].appliance[0].slice(1).toLowerCase()).replace(/[.*+?^${}()|[0-9[\]\\]/g, ""))
         }
         
-    });
+    };
     selectAllTags(presentsingredients, presentsappliances, presentsustensils)
     searchingredient.value = ""
     searchappliance.value = ""
@@ -264,8 +264,8 @@ function searchTerm(article){
     let retour = false
     let verifiedstring = 0
     let prevelement = ""
-    searchallbar.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(" ").forEach(element => {
-        if (article.globalinfos.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(element) && prevelement != element) {
+    for(let i = 0; i < searchallbar.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(" ").length; i++){
+        if (article.globalinfos.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(searchallbar.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(" ")[i]) && prevelement != searchallbar.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(" ")[i]) {
                 verifiedstring++
         }
         if (verifiedstring == searchallbar.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(" ").length) {
@@ -273,8 +273,8 @@ function searchTerm(article){
         }else{
             retour = false
         }
-        prevelement = element
-    });
+        prevelement = searchallbar.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(" ")[i]
+    };
     if (retour == false) {
         return false
     }else{
@@ -283,10 +283,10 @@ function searchTerm(article){
 }
 
 function applyAdvanced(categorie, article, categarray){
-    document.querySelectorAll(categorie).forEach(tag => {
+    for(let i = 0; i < document.querySelectorAll(categorie).length; i++){
         let test = 0
-        categarray.forEach(element => {
-            if (element.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(tag.textContent.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")) && article.showed == true) {
+        for(let j = 0; j < categarray.length; j++){
+            if (categarray[j].toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(document.querySelectorAll(categorie)[i].textContent.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")) && article.showed == true) {
                 article.style.display = ""
                 article.showed = true
             }else{
@@ -296,18 +296,18 @@ function applyAdvanced(categorie, article, categarray){
                 article.style.display = "none"
                 article.showed = false
             }
-        });
-    });
+        };
+    };
 }
 
 function resultAdvancedSearchbar(searchbar, type){
     searchbar.addEventListener("input", () => {
-        document.querySelectorAll(".listall."+type+" li").forEach(element => {
+        for(let i = 0; i < document.querySelectorAll(".listall."+type+" li").length; i++){
             if (element.textContent.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(searchbar.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""))) {
                 element.style.display = ""
             }else{
                 element.style.display = "none"
             }
-        });
+        };
     })
 }
