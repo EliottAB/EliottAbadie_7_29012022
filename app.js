@@ -4,12 +4,12 @@ let allustensils = []
 let presentsingredients = []
 let presentsappliances = []
 let presentsustensils = []
-let selectedtags = document.querySelector(".selectedtags")
-let searchallbar = document.querySelector("#search")
-let searchingredient = document.querySelector(".searchingredient")
-let searchappliance = document.querySelector(".searchappliance")
-let searchustensil = document.querySelector(".searchustensil")
-let recipescontainer = document.querySelector(".recettes")
+const selectedtags = document.querySelector(".selectedtags")
+const searchallbar = document.querySelector("#search")
+const searchingredient = document.querySelector(".searchingredient")
+const searchappliance = document.querySelector(".searchappliance")
+const searchustensil = document.querySelector(".searchustensil")
+const recipescontainer = document.querySelector(".recettes")
 
 selectAllTags(allingredients, allappliances, allustensils)
 resultAdvancedSearchbar(searchingredient, "ingredients")
@@ -98,7 +98,7 @@ function displayListsElements(tagsarray, listnth, type){
                 selectedtags.appendChild(li)
                 li.selected = true
             }
-            resultSearchbar()
+            resultSearchbar(allarticles, true)
             searchingredient.value = ""
             searchappliance.value = ""
             searchustensil.value = ""
@@ -209,19 +209,20 @@ recipes.forEach(recipe => {
     article.appendChild(description)
     recipescontainer.appendChild(article)
 });
+const allarticles = document.querySelectorAll(".recettes article")
 
 searchallbar.addEventListener("input", () => {
-    resultSearchbar()
+    resultSearchbar(allarticles, true)
 })
 
 //show results and filter tags when user is typing in global searchbar
-function resultSearchbar(){
+function resultSearchbar(articles, advanced){
         presentsingredients = []
         presentsappliances = []
         presentsustensils = []
     if (searchallbar.value.length >= 3) {
-        document.querySelectorAll(".recettes article").forEach(article => { 
-            if ((searchTerm(article)==true || article.description.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").indexOf(searchallbar.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""))>-1) == false) {
+        articles.forEach(article => { 
+            if((searchTerm(article)==true ||article.description.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").indexOf(searchallbar.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""))>-1) == false) {
                 article.style.display = "none"
                 article.showed = false
             }else{
@@ -230,15 +231,17 @@ function resultSearchbar(){
             }
         });
     }else{
-        document.querySelectorAll(".recettes article").forEach(article => {
+        articles.forEach(article => {
             article.style.display = ""
             article.showed = true
         });
     }
-    document.querySelectorAll(".recettes article").forEach(article => {
-        applyAdvanced(".selectedustensil", article, article.ustensils)
-        applyAdvanced(".selectedappliance", article, article.appliance)
-        applyAdvanced(".selectedingredient", article, article.ingredients)
+    articles.forEach(article => {
+        if(advanced == true) {
+            applyAdvanced(".selectedustensil", article, article.ustensils)
+            applyAdvanced(".selectedappliance", article, article.appliance)
+            applyAdvanced(".selectedingredient", article, article.ingredients)       
+        }
         if (article.showed == true) {
             article.ingredients.forEach(ingredient => {
                 presentsingredients.push((ingredient.charAt(0).toUpperCase() + ingredient.slice(1).toLowerCase()).replace(/[.*+?^${}()|[0-9[\]\\]/g, ""))
