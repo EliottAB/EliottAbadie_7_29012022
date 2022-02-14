@@ -244,12 +244,12 @@ function resultSearchbar(articles, advanced){
             applyAdvanced(".selectedingredient", articles[i], articles[i].ingredients)       
         }
         if (articles[i].showed == true) {
-            articles[i].ingredients.forEach(ingredient => {
-                presentsingredients.push((ingredient.charAt(0).toUpperCase() + ingredient.slice(1).toLowerCase()).replace(/[.*+?^${}()|[0-9[\]\\]/g, ""))
-            });
-            articles[i].ustensils.forEach(ustensil => {
-                presentsustensils.push((ustensil.charAt(0).toUpperCase() + ustensil.slice(1).toLowerCase()).replace(/[.*+?^${}()|[0-9[\]\\]/g, ""))
-            });
+            for(let j = 0; j < articles[i].ingredients.length; j++){
+                presentsingredients.push((articles[i].ingredients[j].charAt(0).toUpperCase() + articles[i].ingredients[j].slice(1).toLowerCase()).replace(/[.*+?^${}()|[0-9[\]\\]/g, ""))
+            };
+            for(let j = 0; j < articles[i].ustensils.length; j++){
+                presentsustensils.push((articles[i].ustensils[j].charAt(0).toUpperCase() + articles[i].ustensils[j].slice(1).toLowerCase()).replace(/[.*+?^${}()|[0-9[\]\\]/g, ""))
+            };
             presentsappliances.push((articles[i].appliance[0].charAt(0).toUpperCase() + articles[i].appliance[0].slice(1).toLowerCase()).replace(/[.*+?^${}()|[0-9[\]\\]/g, ""))
         }
         
