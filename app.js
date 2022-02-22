@@ -42,7 +42,7 @@ function deleteWrongs(tagsarray, tag){
             }
         });
         if (isthesame == false) {
-            tagsarray.push((tag.charAt(0).toUpperCase() + tag.slice(1).toLowerCase()).replace(/[.*+?^${}()|[0-9[\]\\]/g, ""))
+            tagsarray.push((tag.charAt(0).toUpperCase() + tag.slice(1).toLowerCase()).replace(/[.*+?%^${}()|[0-9[\]\\]/g, ""))
         }
     }else{
         tagsarray.forEach(element => {
@@ -247,12 +247,12 @@ function resultSearchbar(articles, advanced){
         }
         if (article.showed == true) {
             article.ingredients.forEach(ingredient => {
-                presentsingredients.push((ingredient.charAt(0).toUpperCase() + ingredient.slice(1).toLowerCase()).replace(/[.*+?^${}()|[0-9[\]\\]/g, ""))
+                presentsingredients.push((ingredient.charAt(0).toUpperCase() + ingredient.slice(1).toLowerCase()).replace(/[.*+?%^${}()|[0-9[\]\\]/g, ""))
             });
             article.ustensils.forEach(ustensil => {
-                presentsustensils.push((ustensil.charAt(0).toUpperCase() + ustensil.slice(1).toLowerCase()).replace(/[.*+?^${}()|[0-9[\]\\]/g, ""))
+                presentsustensils.push((ustensil.charAt(0).toUpperCase() + ustensil.slice(1).toLowerCase()).replace(/[.*+?%^${}()|[0-9[\]\\]/g, ""))
             });
-            presentsappliances.push((article.appliance[0].charAt(0).toUpperCase() + article.appliance[0].slice(1).toLowerCase()).replace(/[.*+?^${}()|[0-9[\]\\]/g, ""))
+            presentsappliances.push((article.appliance[0].charAt(0).toUpperCase() + article.appliance[0].slice(1).toLowerCase()).replace(/[.*+?%^${}()|[0-9[\]\\]/g, ""))
         }
         
     });
@@ -292,7 +292,7 @@ function applyAdvanced(categorie, article, categarray){
             article.showed = false
         }
         categarray.forEach(element => {
-            if (element.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") == (tag.textContent.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")) && article.showed == true && categarray.length>=1) {
+            if (element.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[.*+?%^${}()|[0-9[\]\\]/g, "") == (tag.textContent.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")) && article.showed == true && categarray.length>=1) {
                 article.style.display = ""
                 article.showed = true
             }else{
