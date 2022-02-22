@@ -17,7 +17,7 @@ selectAllTags(allingredients, allappliances, allustensils)
 //take elements from recipe.js to put it in advanced filters
 function selectAllTags(ingredientsarray, appliancesarray, ustensilsarray){
     recipes.forEach(recipe => {
-        if (recipe.name && recipe.description && recipe.ingredients) {
+        if (recipe.name && recipe.description && recipe.ingredients.length>0) {
             recipe.ingredients.forEach(ingredients => {
                 deleteWrongs(ingredientsarray, ingredients.ingredient)
             })
