@@ -42,7 +42,7 @@ function deleteWrongs(tagsarray, tag){
             }
         };
         if (isthesame == false) {
-            tagsarray.push((tag.charAt(0).toUpperCase() + tag.slice(1).toLowerCase()).replace(/[.*+?^${}()|[0-9[\]\\]/g, ""))
+            tagsarray.push((tag.charAt(0).toUpperCase() + tag.slice(1).toLowerCase()).replace(/[.*+?^%${}()|[0-9[\]\\]/g, ""))
         }
     }else{
         for(let i = 0; i < tagsarray.length; i++){
@@ -248,12 +248,12 @@ function resultSearchbar(articles, advanced){
         }
         if (articles[i].showed == true) {
             for(let j = 0; j < articles[i].ingredients.length; j++){
-                presentsingredients.push((articles[i].ingredients[j].charAt(0).toUpperCase() + articles[i].ingredients[j].slice(1).toLowerCase()).replace(/[.*+?^${}()|[0-9[\]\\]/g, ""))
+                presentsingredients.push((articles[i].ingredients[j].charAt(0).toUpperCase() + articles[i].ingredients[j].slice(1).toLowerCase()).replace(/[.*+?^%${}()|[0-9[\]\\]/g, ""))
             };
             for(let j = 0; j < articles[i].ustensils.length; j++){
-                presentsustensils.push((articles[i].ustensils[j].charAt(0).toUpperCase() + articles[i].ustensils[j].slice(1).toLowerCase()).replace(/[.*+?^${}()|[0-9[\]\\]/g, ""))
+                presentsustensils.push((articles[i].ustensils[j].charAt(0).toUpperCase() + articles[i].ustensils[j].slice(1).toLowerCase()).replace(/[.*+?^%${}()|[0-9[\]\\]/g, ""))
             };
-            presentsappliances.push((articles[i].appliance[0].charAt(0).toUpperCase() + articles[i].appliance[0].slice(1).toLowerCase()).replace(/[.*+?^${}()|[0-9[\]\\]/g, ""))
+            presentsappliances.push((articles[i].appliance[0].charAt(0).toUpperCase() + articles[i].appliance[0].slice(1).toLowerCase()).replace(/[.*+?^%${}()|[0-9[\]\\]/g, ""))
         }
         
     };
@@ -293,7 +293,7 @@ function applyAdvanced(categorie, article, categarray){
             article.showed = false
         }
         for(let j = 0; j < categarray.length; j++){
-            if (categarray[j].toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") == (document.querySelectorAll(categorie)[i].textContent.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")) && article.showed == true) {
+            if (categarray[j].toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[.*+?^%${}()|[0-9[\]\\]/g, "") == (document.querySelectorAll(categorie)[i].textContent.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")) && article.showed == true) {
                 article.style.display = ""
                 article.showed = true
             }else{
