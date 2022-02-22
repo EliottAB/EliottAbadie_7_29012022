@@ -12,20 +12,19 @@ const searchustensil = document.querySelector(".searchustensil")
 const recipescontainer = document.querySelector(".recettes")
 
 selectAllTags(allingredients, allappliances, allustensils)
-resultAdvancedSearchbar(searchingredient, "ingredients")
-resultAdvancedSearchbar(searchappliance, "appliances")
-resultAdvancedSearchbar(searchustensil, "ustensils")
 
 
 //take elements from recipe.js to put it in advanced filters
 function selectAllTags(ingredientsarray, appliancesarray, ustensilsarray){
     for(let i = 0; i < recipes.length; i++){
-        for(let j = 0; j < recipes[i].ingredients.length; j++){
-            deleteWrongs(ingredientsarray, recipes[i].ingredients[j].ingredient)
-        }
-        deleteWrongs(appliancesarray, recipes[i].appliance)
-        for(let j = 0; j < recipes[i].ustensils.length; j++){
-            deleteWrongs(ustensilsarray, recipes[i].ustensils[j])
+        if (recipes[i].name && recipes[i].description && recipes[i].ingredients.length>0) {
+            for(let j = 0; j < recipes[i].ingredients.length; j++){
+                deleteWrongs(ingredientsarray, recipes[i].ingredients[j].ingredient)
+            }
+            deleteWrongs(appliancesarray, recipes[i].appliance)
+            for(let j = 0; j < recipes[i].ustensils.length; j++){
+                deleteWrongs(ustensilsarray, recipes[i].ustensils[j])
+            }
         }
     };
     displayListsElements(ingredientsarray, 1, "ingredient")
@@ -82,30 +81,32 @@ function displayListsElements(tagsarray, listnth, type){
         return a.localeCompare(b);
       });
     for(let i = 0; i < tagsarray.length; i++){
-        let li = document.createElement("li")
-        let croix = document.createElement("img")
-        croix.src = "assets/croix.png"
-        li.innerHTML = tagsarray[i]
-        li.addEventListener("click", () => {
-            if(li.selected == true){
-                li.removeChild(croix)
-                li.classList.remove("selected" + type)
-                document.querySelector(".tags>li:nth-child("+ listnth +") .listall").appendChild(li)
-                li.selected = false
+        if (tagsarray[i] != "") {
+            let li = document.createElement("li")
+            let croix = document.createElement("img")
+            croix.src = "assets/croix.png"
+            li.innerHTML = tagsarray[i]
+            li.addEventListener("click", () => {
+                if(li.selected == true){
+                    li.removeChild(croix)
+                    li.classList.remove("selected" + type)
+                    document.querySelector(".tags>li:nth-child("+ listnth +") .listall").appendChild(li)
+                    li.selected = false
 
-            }else{
-                li.appendChild(croix)
-                li.classList.add("selected" + type)
-                selectedtags.appendChild(li)
-                li.selected = true
+                }else{
+                    li.appendChild(croix)
+                    li.classList.add("selected" + type)
+                    selectedtags.appendChild(li)
+                    li.selected = true
+                }
+                resultSearchbar(allarticles, true)
+                searchingredient.value = ""
+                searchappliance.value = ""
+                searchustensil.value = ""
+            })
+            if (searchInSelectedTags(tagsarray[i]) == false) { 
+                document.querySelector(".tags>li:nth-child("+ listnth +") .listall").appendChild(li)
             }
-            resultSearchbar(allarticles, true)
-            searchingredient.value = ""
-            searchappliance.value = ""
-            searchustensil.value = ""
-        })
-        if (searchInSelectedTags(tagsarray[i]) == false) { 
-            document.querySelector(".tags>li:nth-child("+ listnth +") .listall").appendChild(li)
         }
     }
 }
@@ -141,74 +142,76 @@ function closeList(element, buttontext){
 
 //display all recipes
 for(let i = 0; i < recipes.length; i++){
-    let article = document.createElement("article")
-    article.ingredientsstring = ""
-    article.description = recipes[i].description
-    article.globalinfos = recipes[i].name + " "
-    article.ingredients = []
-    article.appliance = []
-    article.appliance.push(recipes[i].appliance)
-    article.ustensils = recipes[i].ustensils
+    if (recipes[i].name && recipes[i].description && recipes[i].ingredients.length>0) {
+        let article = document.createElement("article")
+        article.ingredientsstring = ""
+        article.description = recipes[i].description
+        article.globalinfos = recipes[i].name + " "
+        article.ingredients = []
+        article.appliance = []
+        article.appliance.push(recipes[i].appliance)
+        article.ustensils = recipes[i].ustensils
 
-    let imagecontainer = document.createElement("div")
-    imagecontainer.classList.add("imagecontainer")
+        let imagecontainer = document.createElement("div")
+        imagecontainer.classList.add("imagecontainer")
 
-    let name = document.createElement("h3")
-    name.innerHTML = recipes[i].name
-    name.classList.add("name")
+        let name = document.createElement("h3")
+        name.innerHTML = recipes[i].name
+        name.classList.add("name")
 
-    let timecontainer = document.createElement("div")
-    timecontainer.classList.add("timecontainer")
-    let timeicon = document.createElement("img")
-    timeicon.src = "assets/horloge.png"
-    let time = document.createElement("p")
-    time.innerHTML = recipes[i].time + " min"
+        let timecontainer = document.createElement("div")
+        timecontainer.classList.add("timecontainer")
+        let timeicon = document.createElement("img")
+        timeicon.src = "assets/horloge.png"
+        let time = document.createElement("p")
+        time.innerHTML = recipes[i].time + " min"
 
-    let needs = document.createElement("div")
-    needs.classList.add("needs")
-    for(let j = 0; j < recipes[i].ingredients.length; j++){
-        article.ingredientsstring = article.ingredientsstring + recipes[i].ingredients[j].ingredient + " "
-        article.ingredients.push(recipes[i].ingredients[j].ingredient)
-        let ingredientp = document.createElement("p")
-        let details = document.createElement("span")
-        if (recipes[i].ingredients[j].unit == "grammes") {
-            recipes[i].ingredients[j].unit = "g"
-        }
-        if (recipes[i].ingredients[j].unit) {
-            if (recipes[i].ingredients[j].unit.indexOf(" ")>-1){
-                recipes[i].ingredients[j].unit = recipes[i].ingredients[j].unit.substring(0, recipes[i].ingredients[j].unit.indexOf(' '))
+        let needs = document.createElement("div")
+        needs.classList.add("needs")
+        for(let j = 0; j < recipes[i].ingredients.length; j++){
+            article.ingredientsstring = article.ingredientsstring + recipes[i].ingredients[j].ingredient + " "
+            article.ingredients.push(recipes[i].ingredients[j].ingredient)
+            let ingredientp = document.createElement("p")
+            let details = document.createElement("span")
+            if (recipes[i].ingredients[j].unit == "grammes") {
+                recipes[i].ingredients[j].unit = "g"
             }
-            if (recipes[i].ingredients[j].unit.length>3){
-                recipes[i].ingredients[j].unit = " " + recipes[i].ingredients[j].unit
-            }
-            ingredientp.innerHTML = recipes[i].ingredients[j].ingredient
-            details.innerHTML = ": " + recipes[i].ingredients[j].quantity + recipes[i].ingredients[j].unit
-            ingredientp.appendChild(details)
-        }else{
-            if (recipes[i].ingredients[j].quantity) {
+            if (recipes[i].ingredients[j].unit) {
+                if (recipes[i].ingredients[j].unit.indexOf(" ")>-1){
+                    recipes[i].ingredients[j].unit = recipes[i].ingredients[j].unit.substring(0, recipes[i].ingredients[j].unit.indexOf(' '))
+                }
+                if (recipes[i].ingredients[j].unit.length>3){
+                    recipes[i].ingredients[j].unit = " " + recipes[i].ingredients[j].unit
+                }
                 ingredientp.innerHTML = recipes[i].ingredients[j].ingredient
-                details.innerHTML = ": " + recipes[i].ingredients[j].quantity
+                details.innerHTML = ": " + recipes[i].ingredients[j].quantity + recipes[i].ingredients[j].unit
                 ingredientp.appendChild(details)
             }else{
-                ingredientp.innerHTML = recipes[i].ingredients[j].ingredient
+                if (recipes[i].ingredients[j].quantity) {
+                    ingredientp.innerHTML = recipes[i].ingredients[j].ingredient
+                    details.innerHTML = ": " + recipes[i].ingredients[j].quantity
+                    ingredientp.appendChild(details)
+                }else{
+                    ingredientp.innerHTML = recipes[i].ingredients[j].ingredient
+                }
             }
+            needs.appendChild(ingredientp)
         }
-        needs.appendChild(ingredientp)
+        article.globalinfos = article.globalinfos + article.ingredientsstring
+
+        let description = document.createElement("p")
+        description.classList.add("description")
+        description.innerHTML = recipes[i].description
+
+        article.appendChild(imagecontainer)
+        article.appendChild(name)
+        timecontainer.appendChild(timeicon)
+        timecontainer.appendChild(time)
+        article.appendChild(timecontainer)
+        article.appendChild(needs)
+        article.appendChild(description)
+        recipescontainer.appendChild(article)
     }
-    article.globalinfos = article.globalinfos + article.ingredientsstring
-
-    let description = document.createElement("p")
-    description.classList.add("description")
-    description.innerHTML = recipes[i].description
-
-    article.appendChild(imagecontainer)
-    article.appendChild(name)
-    timecontainer.appendChild(timeicon)
-    timecontainer.appendChild(time)
-    article.appendChild(timecontainer)
-    article.appendChild(needs)
-    article.appendChild(description)
-    recipescontainer.appendChild(article)
 };
 const allarticles = document.querySelectorAll(".recettes article")
 
@@ -285,8 +288,12 @@ function searchTerm(article){
 function applyAdvanced(categorie, article, categarray){
     for(let i = 0; i < document.querySelectorAll(categorie).length; i++){
         let test = 0
+        if (categarray.length==0) {
+            article.style.display = "none"
+            article.showed = false
+        }
         for(let j = 0; j < categarray.length; j++){
-            if (categarray[j].toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(document.querySelectorAll(categorie)[i].textContent.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")) && article.showed == true) {
+            if (categarray[j].toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") == (document.querySelectorAll(categorie)[i].textContent.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")) && article.showed == true) {
                 article.style.display = ""
                 article.showed = true
             }else{
