@@ -12,21 +12,20 @@ const searchustensil = document.querySelector(".searchustensil")
 const recipescontainer = document.querySelector(".recettes")
 
 selectAllTags(allingredients, allappliances, allustensils)
-resultAdvancedSearchbar(searchingredient, "ingredients")
-resultAdvancedSearchbar(searchappliance, "appliances")
-resultAdvancedSearchbar(searchustensil, "ustensils")
 
 
 //take elements from recipe.js to put it in advanced filters
 function selectAllTags(ingredientsarray, appliancesarray, ustensilsarray){
-    recipes.forEach(element => {
-        element.ingredients.forEach(ingredients => {
-            deleteWrongs(ingredientsarray, ingredients.ingredient)
-        })
-        deleteWrongs(appliancesarray, element.appliance)
-        element.ustensils.forEach(ustensil => {
-            deleteWrongs(ustensilsarray, ustensil)
-        })
+    recipes.forEach(recipe => {
+        if (recipe.name && recipe.description && recipe.ingredients) {
+            recipe.ingredients.forEach(ingredients => {
+                deleteWrongs(ingredientsarray, ingredients.ingredient)
+            })
+            deleteWrongs(appliancesarray, recipe.appliance)
+            recipe.ustensils.forEach(ustensil => {
+                deleteWrongs(ustensilsarray, ustensil)
+            })
+        }
     });
     displayListsElements(ingredientsarray, 1, "ingredient")
     displayListsElements(appliancesarray, 2, "appliance")
@@ -81,30 +80,32 @@ function displayListsElements(tagsarray, listnth, type){
         return a.localeCompare(b);
       });
     tagsarray.forEach(element => {
-        let li = document.createElement("li")
-        let croix = document.createElement("img")
-        croix.src = "assets/croix.png"
-        li.innerHTML = element
-        li.addEventListener("click", () => {
-            if(li.selected == true){
-                li.removeChild(croix)
-                li.classList.remove("selected" + type)
-                document.querySelector(".tags>li:nth-child("+ listnth +") .listall").appendChild(li)
-                li.selected = false
+        if (element != "") {
+            let li = document.createElement("li")
+            let croix = document.createElement("img")
+            croix.src = "assets/croix.png"
+            li.innerHTML = element
+            li.addEventListener("click", () => {
+                if(li.selected == true){
+                    li.removeChild(croix)
+                    li.classList.remove("selected" + type)
+                    document.querySelector(".tags>li:nth-child("+ listnth +") .listall").appendChild(li)
+                    li.selected = false
 
-            }else{
-                li.appendChild(croix)
-                li.classList.add("selected" + type)
-                selectedtags.appendChild(li)
-                li.selected = true
+                }else{
+                    li.appendChild(croix)
+                    li.classList.add("selected" + type)
+                    selectedtags.appendChild(li)
+                    li.selected = true
+                }
+                resultSearchbar(allarticles, true)
+                searchingredient.value = ""
+                searchappliance.value = ""
+                searchustensil.value = ""
+            })
+            if (searchInSelectedTags(element) == false) { 
+                document.querySelector(".tags>li:nth-child("+ listnth +") .listall").appendChild(li)
             }
-            resultSearchbar(allarticles, true)
-            searchingredient.value = ""
-            searchappliance.value = ""
-            searchustensil.value = ""
-        })
-        if (searchInSelectedTags(element) == false) { 
-            document.querySelector(".tags>li:nth-child("+ listnth +") .listall").appendChild(li)
         }
     })
 }
@@ -140,74 +141,76 @@ function closeList(element, buttontext){
 
 //display all recipes
 recipes.forEach(recipe => {
-    let article = document.createElement("article")
-    article.ingredientsstring = ""
-    article.description = recipe.description
-    article.globalinfos = recipe.name + " "
-    article.ingredients = []
-    article.appliance = []
-    article.appliance.push(recipe.appliance)
-    article.ustensils = recipe.ustensils
+    if (recipe.name && recipe.description && recipe.ingredients.length>0) {
+        let article = document.createElement("article")
+        article.ingredientsstring = ""
+        article.description = recipe.description
+        article.globalinfos = recipe.name + " "
+        article.ingredients = []
+        article.appliance = []
+        article.appliance.push(recipe.appliance)
+        article.ustensils = recipe.ustensils
 
-    let imagecontainer = document.createElement("div")
-    imagecontainer.classList.add("imagecontainer")
+        let imagecontainer = document.createElement("div")
+        imagecontainer.classList.add("imagecontainer")
 
-    let name = document.createElement("h3")
-    name.innerHTML = recipe.name
-    name.classList.add("name")
+        let name = document.createElement("h3")
+        name.innerHTML = recipe.name
+        name.classList.add("name")
 
-    let timecontainer = document.createElement("div")
-    timecontainer.classList.add("timecontainer")
-    let timeicon = document.createElement("img")
-    timeicon.src = "assets/horloge.png"
-    let time = document.createElement("p")
-    time.innerHTML = recipe.time + " min"
+        let timecontainer = document.createElement("div")
+        timecontainer.classList.add("timecontainer")
+        let timeicon = document.createElement("img")
+        timeicon.src = "assets/horloge.png"
+        let time = document.createElement("p")
+        time.innerHTML = recipe.time + " min"
 
-    let needs = document.createElement("div")
-    needs.classList.add("needs")
-    recipe.ingredients.forEach(ingredients => {
-        article.ingredientsstring = article.ingredientsstring + ingredients.ingredient + " "
-        article.ingredients.push(ingredients.ingredient)
-        let ingredientp = document.createElement("p")
-        let details = document.createElement("span")
-        if (ingredients.unit == "grammes") {
-            ingredients.unit = "g"
-        }
-        if (ingredients.unit) {
-            if (ingredients.unit.indexOf(" ")>-1){
-                ingredients.unit = ingredients.unit.substring(0, ingredients.unit.indexOf(' '))
+        let needs = document.createElement("div")
+        needs.classList.add("needs")
+        recipe.ingredients.forEach(ingredients => {
+            article.ingredientsstring = article.ingredientsstring + ingredients.ingredient + " "
+            article.ingredients.push(ingredients.ingredient)
+            let ingredientp = document.createElement("p")
+            let details = document.createElement("span")
+            if (ingredients.unit == "grammes") {
+                ingredients.unit = "g"
             }
-            if (ingredients.unit.length>3){
-                ingredients.unit = " " + ingredients.unit
-            }
-            ingredientp.innerHTML = ingredients.ingredient
-            details.innerHTML = ": " + ingredients.quantity + ingredients.unit
-            ingredientp.appendChild(details)
-        }else{
-            if (ingredients.quantity) {
+            if (ingredients.unit) {
+                if (ingredients.unit.indexOf(" ")>-1){
+                    ingredients.unit = ingredients.unit.substring(0, ingredients.unit.indexOf(' '))
+                }
+                if (ingredients.unit.length>3){
+                    ingredients.unit = " " + ingredients.unit
+                }
                 ingredientp.innerHTML = ingredients.ingredient
-                details.innerHTML = ": " + ingredients.quantity
+                details.innerHTML = ": " + ingredients.quantity + ingredients.unit
                 ingredientp.appendChild(details)
             }else{
-                ingredientp.innerHTML = ingredients.ingredient
+                if (ingredients.quantity) {
+                    ingredientp.innerHTML = ingredients.ingredient
+                    details.innerHTML = ": " + ingredients.quantity
+                    ingredientp.appendChild(details)
+                }else{
+                    ingredientp.innerHTML = ingredients.ingredient
+                }
             }
-        }
-        needs.appendChild(ingredientp)
-    })
-    article.globalinfos = article.globalinfos + article.ingredientsstring
+            needs.appendChild(ingredientp)
+        })
+        article.globalinfos = article.globalinfos + article.ingredientsstring
 
-    let description = document.createElement("p")
-    description.classList.add("description")
-    description.innerHTML = recipe.description
+        let description = document.createElement("p")
+        description.classList.add("description")
+        description.innerHTML = recipe.description
 
-    article.appendChild(imagecontainer)
-    article.appendChild(name)
-    timecontainer.appendChild(timeicon)
-    timecontainer.appendChild(time)
-    article.appendChild(timecontainer)
-    article.appendChild(needs)
-    article.appendChild(description)
-    recipescontainer.appendChild(article)
+        article.appendChild(imagecontainer)
+        article.appendChild(name)
+        timecontainer.appendChild(timeicon)
+        timecontainer.appendChild(time)
+        article.appendChild(timecontainer)
+        article.appendChild(needs)
+        article.appendChild(description)
+        recipescontainer.appendChild(article)
+    }
 });
 const allarticles = document.querySelectorAll(".recettes article")
 
@@ -284,8 +287,12 @@ function searchTerm(article){
 function applyAdvanced(categorie, article, categarray){
     document.querySelectorAll(categorie).forEach(tag => {
         let test = 0
+        if (categarray.length==0) {
+            article.style.display = "none"
+            article.showed = false
+        }
         categarray.forEach(element => {
-            if (element.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(tag.textContent.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")) && article.showed == true) {
+            if (element.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") == (tag.textContent.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")) && article.showed == true && categarray.length>=1) {
                 article.style.display = ""
                 article.showed = true
             }else{
