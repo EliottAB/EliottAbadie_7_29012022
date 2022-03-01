@@ -12,6 +12,9 @@ const searchustensil = document.querySelector(".searchustensil")
 const recipescontainer = document.querySelector(".recettes")
 
 selectAllTags(allingredients, allappliances, allustensils)
+resultAdvancedSearchbar(searchingredient, "ingredients")
+resultAdvancedSearchbar(searchappliance, "appliances")
+resultAdvancedSearchbar(searchustensil, "ustensils")
 
 
 //take elements from recipe.js to put it in advanced filters
